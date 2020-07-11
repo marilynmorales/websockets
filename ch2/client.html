@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <style>
+      .label {
+        border-radius: 4px;
+        background-color: #eee;
+        font-weight: bold;
+        padding: 3px;
+      }
+      .label-success {
+        background-color: darkseagreen;
+      }
+      .label-danger {
+        background-color:tomato;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+        <tr>
+          <td>APPL</td>
+          <td><div id="APPL" class="label label-default"></div></td>
+        </tr>
+        <tr>
+          <td>MSFT</td>
+          <td><div id="MSFT" class="label label-default"></div></td>
+        </tr>
+        <tr>
+          <td>AMZN</td>
+          <td><div id="AMZN" class="label label-default"></div></td>
+        </tr>
+        <tr>
+          <td>GOOG</td>
+          <td><div id="GOOG" class="label label-default"></div></td>
+        </tr>
+        <tr>
+          <td>YHOO</td>
+          <td><div id="YHOO" class="label label-default"></div></td>
+        </tr>
+    </table>
+    <script>
+
+        var ws = new WebSocket("ws://localhost:8181");
+
+        var stock_request = {"stocks": ["APPL", "MSFT", "AMZN", "GOOG", "YHOO"]};
+        var stocks = {
+          "APPL": 0,
+          "MSFT": 0,
+          "AMZN": 0,
+          "GOOG": 0,
+          "YHOO": 0
+        };
+
+        ws.onopen = function(e) {
+          console.log("Connection established");
+          ws.send(JSON.stringify(stock_request));
+        }
+        var changeStockEntry = function(symbol, originalValue, newValue){
+          var valElem = document.getElementById(symbol);
+          valElem.innerHTML = newValue.toFixed(2);
+          if(newValue < originalValue) {
+            valElem.classList.add('label-danger');
+            valElem.classList.remove('label-success');
+          } else if(newValue > originalValue) {
+            valElem.classList.add('label-success');
+            valElem.classList.remove('label-danger');
+          }
+        };
+
+        ws.onmessage = function(e) {
+          var stocksData = JSON.parse(e.data);
+          for(var symbol in stocksData) {
+            if(stocksData.hasOwnProperty(symbol)) {
+              changeStockEntry(symbol, stocks[symbol], stocksData[symbol]);
+              stocks[symbol] = stocksData[symbol];
+            }
+          }
+        }
+
+        ws.onerror = function(e) {
+          console.log("Websocket failure error", e)
+//          handleErrors(e);
+        }
+    </script>
+  </body>
+</html>
