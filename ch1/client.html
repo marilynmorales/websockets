@@ -1,0 +1,20 @@
+<html>
+	<head>
+		<script>
+			var ws = new WebSocket("ws://localhost:8181");
+			ws.onopen = function(e) {
+				console.log('connection to server open');
+			}
+			function sendMessage() {
+				const message = document.getElementById('message');
+				ws.send(message.value);
+			}
+		</script>
+	</head>
+	<body>
+		<form>
+			<input id="message" />
+			<button type="button" id="send" onclick="sendMessage();">Send!</button>
+		</form>
+	</body>
+</html>
