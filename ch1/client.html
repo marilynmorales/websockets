@@ -1,20 +1,27 @@
 <html>
-	<head>
-		<script>
-			var ws = new WebSocket("ws://localhost:8181");
-			ws.onopen = function(e) {
-				console.log('connection to server open');
-			}
-			function sendMessage() {
-				const message = document.getElementById('message');
-				ws.send(message.value);
-			}
-		</script>
-	</head>
-	<body>
-		<form>
-			<input id="message" />
-			<button type="button" id="send" onclick="sendMessage();">Send!</button>
-		</form>
-	</body>
+  <head> </head>
+  <body>
+    <div id="print"></div>
+    <form>
+      <input id="message" />
+      <button type="button" id="send" onclick="sendMessage();">Send!</button>
+    </form>
+    <script>
+      var ws = new WebSocket("ws://localhost:8181");
+      var input = document.getElementById("message");
+      ws.onopen = function (e) {
+        console.log("connection to server open");
+      };
+      function sendMessage() {
+        ws.send(input.value);
+      }
+      ws.onmessage = function (message) {
+        const p = document.createElement("p");
+        p.innerText = message.data;
+        const chat = document.getElementById("print");
+        chat.insertBefore(p, chat.childNodes[0]);
+        input.value = "";
+      };
+    </script>
+  </body>
 </html>
