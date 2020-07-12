@@ -2,7 +2,7 @@
   <head> </head>
   <body>
     <div id="print"></div>
-    <form>
+    <form onsubmit="sendMessage();return false;">
       <input id="message" />
       <button type="button" id="send" onclick="sendMessage();">Send!</button>
     </form>
@@ -17,8 +17,8 @@
       }
       ws.onmessage = function (message) {
         const p = document.createElement("p");
-        const { id, message: msg } = JSON.parse(message.data);
-        p.innerHTML = `<strong>${id}</strong>: ${msg}`;
+        const { nickname, message: msg } = JSON.parse(message.data);
+        p.innerHTML = `<strong>${nickname}</strong>: ${msg}`;
         const chat = document.getElementById("print");
         chat.appendChild(p);
         input.value = "";
